@@ -20,15 +20,21 @@ function Home() {
       name: inputName.current.value,
       age: inputAge.current.value,
       email: inputEmail.current.value
-    })
-    getUsers();
+    }).then(() => {
+      getUsers();
+      inputName.current.value='';
+      inputAge.current.value='';
+      inputEmail.current.value='';
+    });
   }
 
   async function deleteUsers(id){
-    api.delete(`/usuarios/${id}`)
+    if(window.confirm('Tem certeza que deseja excluir este usuário?')){
+      api.delete(`/usuarios/${id}`).then(() => {
+        setUsers(users.filter(user => user.id !== id));
+      })
+    }
   }
-  getUsers();
-  
   
   
   useEffect(() => {
