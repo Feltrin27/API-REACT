@@ -1,10 +1,12 @@
 import express from 'express';
+import cors from 'cors';
 import { PrismaClient } from '@prisma/client'
 
 const app = express();
 const prisma = new PrismaClient()
 
 app.use(express.json());
+app.use(cors(/*Aqui em um ambiente de produção entraria o link seguro do front-end*/));
 
 
 app.get('/usuarios', async(req, res) =>{
