@@ -2,9 +2,12 @@ import { useState , useEffect, useRef} from 'react'
 import './style.css'
 import Trash from '../../assets/trash.svg'
 import api from '../../services/api'
+import iconBtn from '../../assets/icons8-edit.svg'
+
 
 function Home() {
   const [users, setUsers] = useState([])
+  const [editingUser, setEditingUser] = useState(null);
 
   const inputName = useRef()
   const inputAge = useRef()
@@ -35,6 +38,31 @@ function Home() {
       })
     }
   }
+
+  async function editUsers(id){
+    const userToEdit = users.find(user => user.id === id);
+    if(userToEdit){
+      inputName.current.value = userToEdit.name;
+      inputAge.current.value = userToEdit.age;
+      inputEmail.current.value = userToEdit.email;
+      setEditingUser(id);
+    }
+  }
+
+  async function updateUser() {
+    if (editingUser) {
+      await api.put(`/usuarios/${editingUser}`, {
+        name: inputName.current.value,
+        age: inputAge.current.value,
+        email: inputEmail.current.value
+      });
+      setEditingUser(null);
+      getUsers();
+      inputName.current.value = '';
+      inputAge.current.value = '';
+      inputEmail.current.value = '';
+    }
+  }
   
   
   useEffect(() => {
@@ -48,7 +76,7 @@ function Home() {
           <input placeholder='Nome'  name='nome' type='text' ref={inputName}/>
           <input placeholder='Idade' name='idade' type='number' ref={inputAge}/>
           <input placeholder='E-mail' name='email' type='email' ref={inputEmail}/>
-          <button type='button' onClick={createUsers}>Cadastrar</button>
+          <button type="button" onClick={editingUser ? updateUser : createUsers}>{editingUser ? 'Atualizar' : 'Cadastrar'}</button>
         </form>
 
       {users.map((user) => (
@@ -58,9 +86,14 @@ function Home() {
           <p>Idade: <span>{user.age}</span></p> 
           <p>Email: <span>{user.email}</span></p> 
         </div>
-        <button onClick={() => deleteUsers(user.id)}>
+        <div className='icones'>
+          <button onClick={() => deleteUsers(user.id)}>
           <img src={Trash}/>
+          </button>
+          <button onClick={() => editUsers(user.id)}>
+          <img src={iconBtn}/>
         </button>
+        </div>
       </div>
       ))}
         

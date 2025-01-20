@@ -77,3 +77,9 @@ form{
     opacity: 0.4;
   }
 }
+
+.icones{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
